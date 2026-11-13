@@ -5,6 +5,7 @@ import sys
 import os.path
 import csv
 import re
+from datetime import datetime
 
 
 def fixname(name):
@@ -37,6 +38,7 @@ def fixphone(num):
 if __name__ == '__main__':
     infile = sys.argv[1]
     outfile = 'members.tsv'                
+    today = datetime.today()
     with open(infile, newline='') as csvfile:
         outcols = ['Name', 'Email', 'Home Phone', 'Mobile Phone', 'Additional Phone']
         phonecols = ['Home Phone', 'Mobile Phone', 'Additional Phone']
@@ -44,6 +46,8 @@ if __name__ == '__main__':
         reader = csv.DictReader(csvfile)
         for row in reader:
             if row['Status (*)'].lower().startswith('unpaid'):
+                continue
+            if datetime.strptime(row['Paid Until'], '%m/%d/%Y') < today:
                 continue
             if row['Name']:
                 row['Name'] = fixname(row['Name'])
@@ -56,3 +60,4 @@ if __name__ == '__main__':
 
 
             
+
